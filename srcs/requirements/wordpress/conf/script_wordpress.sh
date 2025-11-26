@@ -42,6 +42,24 @@ create_wp_config() {
         --dbpass="${MYSQL_PASS}" \
         --dbhost="${MYSQL_DB_HOST}" \
         --allow-root
+    
+    # Add dynamic URL configuration for localhost and domain support
+    cat >> /var/www/html/wp-config.php << 'EOF'
+
+/* Support both localhost and domain name access */
+if ( ( isset( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https' ) || 
+     ( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] === 'on' ) || 
+     $_SERVER['SERVER_PORT'] == 443 || 
+     $_SERVER['SERVER_PORT'] == 8443 ) {
+    $protocol = 'https://';
+} else {
+    $protocol = 'http://';
+}
+
+// Allow access via localhost:8443 or domain name
+define( 'WP_HOME', $protocol . $_SERVER['HTTP_HOST'] );
+define( 'WP_SITEURL', $protocol . $_SERVER['HTTP_HOST'] );
+EOF
   else
     echo "wp-config.php already exists. Skipping creation."
   fi
