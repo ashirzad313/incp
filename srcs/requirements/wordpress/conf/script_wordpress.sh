@@ -49,8 +49,7 @@ create_wp_config() {
 /* Support both localhost and domain name access */
 if ( ( isset( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https' ) || 
      ( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] === 'on' ) || 
-     $_SERVER['SERVER_PORT'] == 443 || 
-     $_SERVER['SERVER_PORT'] == 8443 ) {
+     $_SERVER['SERVER_PORT'] == 443 ) {
     $protocol = 'https://';
 } else {
     $protocol = 'http://';
@@ -95,8 +94,8 @@ fix_wordpress_urls() {
     echo "Fixing WordPress database URLs..."
     
     # Update siteurl and home to use dynamic URLs
-    wp option update siteurl 'https://localhost:8443' --path=/var/www/html --allow-root 2>/dev/null || true
-    wp option update home 'https://localhost:8443' --path=/var/www/html --allow-root 2>/dev/null || true
+    wp option update siteurl 'https://localhost:443' --path=/var/www/html --allow-root 2>/dev/null || true
+    wp option update home 'https://localhost:443' --path=/var/www/html --allow-root 2>/dev/null || true
     
     echo "WordPress URLs updated in database"
   fi

@@ -17,7 +17,7 @@ services:
     build:
       context: ./requirements/nginx
     ports:
-      - "8443:443"
+      - "443:443"
     extra_hosts:
       - "ashirzad.42.fr:127.0.0.1"
     volumes:
