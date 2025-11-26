@@ -1,0 +1,56 @@
+services:
+  mariadb:
+    container_name: mariadb
+    image: mariadb
+    build:
+      context: ./requirements/mariadb
+    env_file:
+      - .env
+    volumes:
+      - wordpress_db:/var/lib/mysql
+    networks:
+      - inception
+    restart: always
+  nginx:
+    container_name: nginx
+    image: nginx
+    build:
+      context: ./requirements/nginx
+    ports:
+      - "8443:443"
+    extra_hosts:
+      - "ashirzad.42.fr:127.0.0.1"
+    volumes:
+      - wordpress_files:/var/www/html
+    networks:
+      - inception
+    restart: always
+  wordpress:
+    container_name: wordpress
+    image: wordpress
+    build:
+      context: ./requirements/wordpress
+    env_file:
+      - .env
+    volumes:
+      - wordpress_files:/var/www/html
+    networks:
+      - inception
+    restart: always
+networks:
+  inception:
+    driver: bridge
+
+volumes:
+  wordpress_db:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/ashirzad/data/mariadb
+      o: bind
+  wordpress_files:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/ashirzad/data/wordpress
+      o: bind
