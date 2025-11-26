@@ -88,12 +88,27 @@ install_wordpress() {
   fi
 }
 
+# Function to fix WordPress URLs if accessed from different host
+fix_wordpress_urls() {
+  # Only fix if WordPress is already installed
+  if wp core is-installed --path=/var/www/html --allow-root 2>/dev/null; then
+    echo "Fixing WordPress database URLs..."
+    
+    # Update siteurl and home to use dynamic URLs
+    wp option update siteurl 'https://localhost:8443' --path=/var/www/html --allow-root 2>/dev/null || true
+    wp option update home 'https://localhost:8443' --path=/var/www/html --allow-root 2>/dev/null || true
+    
+    echo "WordPress URLs updated in database"
+  fi
+}
+
 # Main execution block
 setup_wordpress_files
 wait_for_mariadb
 validate_admin_username
 create_wp_config
 install_wordpress
+fix_wordpress_urls
 
 # Execute the CMD passed in
 exec "$@"
