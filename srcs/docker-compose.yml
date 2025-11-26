@@ -37,6 +37,63 @@ services:
     networks:
       - inception
     restart: always
+  redis:
+    container_name: redis
+    image: redis
+    build:
+      context: ./requirements/bonus/redis
+    networks:
+      - inception
+    restart: always
+  ftp:
+    container_name: ftp
+    image: ftp
+    build:
+      context: ./requirements/bonus/ftp
+    ports:
+      - "2020:20"
+      - "2121:21"
+      - "65500-65515:65500-65515"
+    volumes:
+      - wordpress_files:/home/ftpuser/wordpress
+    networks:
+      - inception
+    restart: always
+  adminer:
+    container_name: adminer
+    image: adminer
+    build:
+      context: ./requirements/bonus/adminer
+    ports:
+      - "8080:8080"
+    networks:
+      - inception
+    restart: always
+  static_site:
+    container_name: static_site
+    image: static_site
+    build:
+      context: ./requirements/bonus/static_site
+    ports:
+      - "8888:80"
+    networks:
+      - inception
+    restart: always
+  portainer:
+    container_name: portainer
+    image: portainer
+    build:
+      context: ./requirements/bonus/portainer
+    ports:
+      - "8000:8000"
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      - inception
+    restart: always
+
 networks:
   inception:
     driver: bridge
@@ -53,4 +110,10 @@ volumes:
     driver_opts:
       type: none
       device: /home/ashirzad/data/wordpress
+      o: bind
+  portainer_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/ashirzad/data/portainer
       o: bind
